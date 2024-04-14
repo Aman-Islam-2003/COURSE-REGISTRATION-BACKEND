@@ -1,46 +1,62 @@
-const { jwtSecret } = require("../config");
-const { Users, sequelize } = require("../models");
-const { generateErrorInstance } = require("../utils");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { Courses, sequelize } = require("../models");
 module.exports = {
-  login: async (req, res) => {
+  create: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const {
+        courseId,
+        title,
+        subjectArea,
+        description,
+        preRequisites,
+        toolsOrSoftwares,
+        externalMaterial,
+        reviewCount,
+        noOfRegisteredStudents,
+        rating,
+        paragraphs,
+      } = req.body;
 
-      if (!email || !password) {
+      if(!courseId ||
+        !title ||
+        !subjectArea ||
+        !description ||
+        !preRequisites ||
+        !toolsOrSoftwares||
+        !externalMaterial ||
+        !reviewCount ||
+       ! noOfRegisteredStudents ||
+        !rating||
+       ! paragraphs){
         throw generateErrorInstance({
           status: 400,
           message: "Required fields can't be empty",
         });
-      }
-      let user = await Users.findOne({
-        where: {
-          email,
-        },
-      });
+       }
 
-      if (!user) {
+       let course = await Courses.findOne({
+        where: {courseId}
+       })
+       if(course){
         throw generateErrorInstance({
-          status: 404,
-          message: "User not found",
+          status: 400,
+          message: "Course already exists",
         });
-      }
+       }
 
-      const passwordMatched = await bcrypt.compare(password, user.password);
-      if (!passwordMatched) {
-        throw generateErrorInstance({
-          status: 401,
-          message: "Invalid Password",
-        });
-      }
-
-      user = user.toJSON();
-      delete user.password;
-
-      const token = jwt.sign(user, jwtSecret);
-
-      return res.status(200).send({ user, token });
+       course = await Courses.create({
+        courseId,
+        title,
+        subjectArea,
+        description,
+        preRequisites,
+        toolsOrSoftwares,
+        externalMaterial,
+        reviewCount,
+        noOfRegisteredStudents,
+        rating,
+        paragraphs,
+       })
+      return res.status(200).send({ course });
     } catch (err) {
       console.log(err);
       return res
@@ -48,5 +64,17 @@ module.exports = {
         .send(err.message || "Something went wrong!");
     }
   },
+  getAllCourses: async(req,res)=>{
+    try{
+      const courses = await Courses.findAll();
+      return res.status(200).send({ courses });
+
+    }catch (err) {
+      console.log(err);
+      return res
+        .status(err.status || 500)
+        .send(err.message || "Something went wrong!");
+    }
+  }
   
 };
