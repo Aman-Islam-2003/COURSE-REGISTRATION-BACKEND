@@ -1,0 +1,45 @@
+:root {
+     --primayColor: rgb(20, 101, 167);
+      --secondaryColor: rgb(161, 214, 161);
+      --borderRadius: 25px;
+ }
+
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+.container{
+display: flex;
+justify-content: space-between;
+}
+
+nav{
+     display: flex;
+     justify-content: end;
+     background-color:var(--primayColor);
+     padding: 8px;
+}
+.profile img{
+     border-radius: 10px;
+     width: 30px;
+     height: 30px;
+     margin-right: 10px;
+} 
+a{
+     color: var(--primayColor);
+     text-decoration: none;
+     margin: 25px 0;
+}
+.card img{
+     width: 200px;
+     height: 160px;
+     object-fit: cover;
+     border-radius: 10px;
+}
+.card{
+     border: 1px solid #000;
+     border-radius: 10px;
+     display: flex;
+}
